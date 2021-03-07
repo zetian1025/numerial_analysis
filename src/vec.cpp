@@ -72,7 +72,7 @@ vec vec::operator /(const vec & vect){
     return vec(newVec);
 }
 
-vec vec::operator +=(const vec & vect){
+void vec::operator +=(const vec & vect){
     if (size() != vect.size()){
         printf("vector size mismatch!");
         exit(1);
@@ -81,11 +81,9 @@ vec vec::operator +=(const vec & vect){
     for (int i=0; i<size(); i++){
         vec_d[i] += vect[i];
     }
-
-    return *this;
 }
 
-vec vec::operator -=(const vec & vect){
+void vec::operator -=(const vec & vect){
     if (size() != vect.size()){
         printf("vector size mismatch!");
         exit(1);
@@ -94,11 +92,9 @@ vec vec::operator -=(const vec & vect){
     for (int i=0; i<size(); i++){
         vec_d[i] -= vect[i];
     }
-
-    return *this;
 }
 
-vec vec::operator *=(const vec & vect){
+void vec::operator *=(const vec & vect){
     if (size() != vect.size()){
         printf("vector size mismatch!");
         exit(1);
@@ -107,11 +103,9 @@ vec vec::operator *=(const vec & vect){
     for (int i=0; i<size(); i++){
         vec_d[i] *= vect[i];
     }
-
-    return *this;
 }
 
-vec vec::operator /=(const vec & vect){
+void vec::operator /=(const vec & vect){
     if (size() != vect.size()){
         printf("vector size mismatch!");
         exit(1);
@@ -120,8 +114,62 @@ vec vec::operator /=(const vec & vect){
     for (int i=0; i<size(); i++){
         vec_d[i] /= vect[i];
     }
+}
 
-    return *this;
+vec vec::operator +(const double & k){
+    vector_d newVec;
+    for (int i=0; i<size(); i++){
+        newVec.push_back(vec_d[i] + k);
+    }
+    return vec(newVec);
+}
+
+vec vec::operator -(const double & k){
+    vector_d newVec;
+    for (int i=0; i<size(); i++){
+        newVec.push_back(vec_d[i] - k);
+    }
+    return vec(newVec);
+}
+
+vec vec::operator *(const double & k){
+    vector_d newVec;
+    for (int i=0; i<size(); i++){
+        newVec.push_back(vec_d[i] * k);
+    }
+    return vec(newVec);
+}
+
+vec vec::operator /(const double & k){
+    vector_d newVec;
+    for (int i=0; i<size(); i++){
+        newVec.push_back(vec_d[i] / k);
+    }
+    return vec(newVec);
+}
+
+void vec::operator +=(const double & k){
+    for (auto& num : vec_d){
+        num += k;
+    }
+}
+
+void vec::operator -=(const double & k){
+    for (auto& num : vec_d){
+        num -= k;
+    }
+}
+
+void vec::operator *=(const double & k){
+    for (auto& num : vec_d){
+        num *= k;
+    }
+}
+
+void vec::operator /=(const double & k){
+    for (auto& num : vec_d){
+        num /= k;
+    }
 }
 
 double& vec::operator [](int index){
@@ -132,7 +180,7 @@ double& vec::operator [](int index){
     return vec_d[index];
 }
 
-const double vec::operator [](int index) const {
+const double& vec::operator [](int index) const {
     if (index < 0 || index >= size()){
         printf("index out of bound!");
         exit(1);

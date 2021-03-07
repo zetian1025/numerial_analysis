@@ -19,26 +19,25 @@ class vec{
     vector_d data() const;
 
     double& operator [](int);
-
-    const double operator [](int) const;
+    const double& operator [](int) const;
 
     vec operator +(const vec &);
-    vec operator +=(const vec &);
+    void operator +=(const vec &);
     vec operator -(const vec &);
-    vec operator -=(const vec &);
+    void operator -=(const vec &);
     vec operator *(const vec &);
-    vec operator *=(const vec &);
+    void operator *=(const vec &);
     vec operator /(const vec &);
-    vec operator /=(const vec &);
+    void operator /=(const vec &);
 
     vec operator +(const double &);
-    vec operator +=(const double &);
+    void operator +=(const double &);
     vec operator -(const double &);
-    vec operator -=(const double &);
+    void operator -=(const double &);
     vec operator *(const double &);
-    vec operator *=(const double &);
+    void operator *=(const double &);
     vec operator /(const double &);
-    vec operator /=(const double &);
+    void operator /=(const double &);
 };
 
 #endif

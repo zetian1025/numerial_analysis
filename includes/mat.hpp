@@ -8,35 +8,33 @@ typedef vector<vector_d> matrix_d;
 class mat{
     private:
     matrix_d mat_d;
-    int size();
 
     public:
-    mat(int row, int col, int num=0);
+    mat(int, int, int);
+    mat(const matrix_d &);
 
-    matrix_d& operator [](int);
+    int size() const;
 
-    matrix_d& operator +(const matrix_d &);
-    matrix_d& operator +=(const matrix_d &);
-    matrix_d& operator -(const matrix_d &);
-    matrix_d& operator -=(const matrix_d &);
-    matrix_d& operator *(const matrix_d &);
-    matrix_d& operator *=(const matrix_d &);
-    matrix_d& operator /(const matrix_d &);
-    matrix_d& operator /=(const matrix_d &);
+    vector_d& operator [](int);
+    const vector_d& operator [](int) const;
 
-    matrix_d& operator +(const double &);
-    matrix_d& operator +=(const double &);
-    matrix_d& operator -(const double &);
-    matrix_d& operator -=(const double &);
-    matrix_d& operator *(const double &);
-    matrix_d& operator *=(const double &);
-    matrix_d& operator /(const double &);
-    matrix_d& operator /=(const double &);
+    mat operator +(const mat &);
+    void operator +=(const mat &);
+    mat operator -(const mat &);
+    void operator -=(const mat &);
+    mat operator *(const mat &);
+    void operator *=(const mat &);
 
-    matrix_d& operator *(const vector_d &);
-    matrix_d& operator *=(const vector_d &);
+    mat operator +(const double &);
+    void operator +=(const double &);
+    mat operator -(const double &);
+    void operator -=(const double &);
+    mat operator *(const double &);
+    void operator *=(const double &);
+    mat operator /(const double &);
+    void operator /=(const double &);
 
-    matrix_d invertion();
+    mat invertion();
 };
 
 #endif
