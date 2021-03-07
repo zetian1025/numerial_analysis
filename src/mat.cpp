@@ -107,7 +107,7 @@ void mat::operator *=(const mat & matr){
     int row = this->size();
     int col = matr[0].size();
 
-    mat newMat(row, col);
+    mat newMat(row, col, 0);
     for (int i=0; i<row; i++)
         for (int j=0; j<col; j++)
             for (int k=0; k<matr.size(); k++)
@@ -116,3 +116,80 @@ void mat::operator *=(const mat & matr){
     (*this) = newMat;
 }
 
+mat mat::operator +(const double & k){
+    mat newMat(*this);
+    for (int i=0; i<newMat.size(); i++)
+        for (int j=0; j<newMat[0].size(); j++)
+            newMat[i][j] += k;
+    return newMat;
+}
+
+mat mat::operator -(const double & k){
+    mat newMat(*this);
+    for (int i=0; i<newMat.size(); i++)
+        for (int j=0; j<newMat[0].size(); j++)
+            newMat[i][j] -= k;
+    return newMat;
+}
+
+mat mat::operator *(const double & k){
+    mat newMat(*this);
+    for (int i=0; i<newMat.size(); i++)
+        for (int j=0; j<newMat[0].size(); j++)
+            newMat[i][j] *= k;
+    return newMat;
+}
+
+mat mat::operator /(const double & k){
+    if (k == 0) {
+        printf("div 0 error");
+        exit(1);
+    }
+
+    mat newMat(*this);
+    for (int i=0; i<newMat.size(); i++)
+        for (int j=0; j<newMat[0].size(); j++)
+            newMat[i][j] /= k;
+    return newMat;
+}
+
+void mat::operator +=(const double & k){
+    for (auto& rows : this->mat_d)
+        for (auto& num : rows)
+            num += k;
+}
+
+void mat::operator -=(const double & k){
+    for (auto& rows : this->mat_d)
+        for (auto& num : rows)
+            num -= k;
+}
+
+void mat::operator *=(const double & k){
+    for (auto& rows : this->mat_d)
+        for (auto& num : rows)
+            num *= k;
+}
+
+void mat::operator /=(const double & k){
+    if (k == 0){
+        printf("div 0 error");
+        exit(1);
+    }
+
+    for (auto& rows : this->mat_d)
+        for (auto& num : rows)
+            num /= k;
+}
+
+mat mat::invertion(){
+    int row = size();
+    int col = this->mat_d[0].size();
+    if (row != col){
+        printf("rectangle matrix can't be inverted");
+        exit(1);
+    }
+
+    //Guass-Jordan Elimination
+    //todo
+}
