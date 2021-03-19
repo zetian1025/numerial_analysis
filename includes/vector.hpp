@@ -1,6 +1,7 @@
 #ifndef VECTOR_H_
 #define VECTOR_H_
 
+#define ZERO_LIMIT 1e-6
 #include <vector>
 #include <iostream>
 

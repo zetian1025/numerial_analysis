@@ -2,18 +2,21 @@
 using namespace std;
 
 int main(){
-    Vector<double> vec1({1, 2, 3});
-    Vector<double> vec2({2, 1, 4});
-    cout << vec1.dot(vec2) << endl;
-    Vector<double> v1 = vec1/vec2;
-    Vector<double> v2 = vec1*vec2;
-    for (int i=0; i<v1.get_size(); i++){
-        cout << v1[i] << " ";
+    Matrix<double> I(3, 3);
+    I = I.identity();
+    I[1][0] = 2;
+    for (int i=0; i<I.get_size().first; i++) {
+        for (int j=0; j<I.get_size().second; j++){
+            cout << I[i][j] << ' ';
+        }
+        cout << endl;
     }
-    cout << endl;
-    for (int i=0; i<v1.get_size(); i++) {
-        cout << v2[i] << ' ';
+    I = I.invertion();
+    for (int i=0; i<I.get_size().first; i++) {
+        for (int j=0; j<I.get_size().second; j++){
+            cout << I[i][j] << ' ';
+        }
+        cout << endl;
     }
-    cout << endl;
     return 0;
 }

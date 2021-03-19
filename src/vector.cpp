@@ -1,6 +1,5 @@
 #include "../includes/vector.hpp"
 #include <cmath>
-#define ZERO_LIMIT 1e-6
 
 template <typename T>
 inline int Vector<T>::get_size() const{ return size; }
@@ -190,6 +189,7 @@ template <typename T>
 Vector<T>& Vector<T>::operator -=(const Vector & Vec){
     if (size != Vec.get_size()){
         printf("vector size mismatched!\n");
+        printf("size %d and %d\n", size, Vec.get_size());
         exit(-1);
     }
     for (int i=0; i<size; i++) 
