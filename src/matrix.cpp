@@ -1,13 +1,13 @@
 #include "../includes/matrix.hpp"
 
 template <typename T>
-inline pair<int, int> Matrix<T>::get_size() const{
-    pair<int, int> size(row, col);
+inline std::pair<int, int> Matrix<T>::get_size() const{
+    std::pair<int, int> size(row, col);
     return size;
 }
 
 template <typename T>
-inline vector<vector<T>> Matrix<T>::get_matrix() const{
+inline std::vector<Vector<T>> Matrix<T>::get_matrix() const{
     return my_matrix;
 }
 
@@ -31,29 +31,62 @@ const Vector<T>& Matrix<T>::operator[](const int& index) const{
 
 template <typename T>
 Matrix<T>::Matrix(int _row, int _col, T init){
-    my_matrix = vector<vector<T>>(_row, vector<T>(_col, init));
+    my_matrix = std::vector<Vector<T>>(_row, Vector<T>(_col, init));
     row = _row;
     col = _col;
 }
 
 template <typename T>
 Matrix<T>::Matrix(const Matrix<T> & Mat){
-    vector<vector<T>> temp_matrix = Mat.get_matrix();
+    std::vector<Vector<T>> temp_matrix = Mat.get_matrix();
     my_matrix = temp_matrix;
     row = Mat.get_size().first;
     col = Mat.get_size().second;
 }
 
 template <typename T>
-Matrix<T>::Matrix(const vector<vector<T>> & mat){
-    my_matrix = mat;
+Matrix<T>::Matrix(const std::vector<std::vector<T>> & mat){
+    my_matrix.clear();
+    for (auto& Vec : mat)
+        my_matrix.push_back(Vec);
     row = mat.size();
     col = mat[0].size();
 }
 
 template <typename T>
+Matrix<T>::Matrix(int _row, const std::vector<T> & vec){
+    my_matrix.clear();
+    for (int i=0; i<_row; i++) {
+        my_matrix.push_back(vec);
+    }
+    row = _row;
+    col = vec.size();
+}
+
+template <typename T>
+Matrix<T>::Matrix(const std::initializer_list<std::vector<T>> & args){
+    my_matrix.clear();
+    col = 0;
+    for (auto& arg : args){
+        my_matrix.push_back(arg);
+        col = std::max(col, (const int)(arg.size()));
+    }
+    row = args.size();
+    for (auto& Vec : my_matrix){
+        Vec.resize(col);
+    }
+}
+
+template <typename T>
+Matrix<T>::Matrix(const std::vector<Vector<T>> & Mat){
+    my_matrix = Mat;
+    row = Mat.size();
+    col = Mat[0].get_size();
+}
+
+template <typename T>
 Matrix<T> Matrix<T>::operator+(const T & number){
-    vector<vector<T>> newMat = my_matrix;
+    std::vector<Vector<T>> newMat = my_matrix;
     for (auto& ele : newMat)
         ele += number;
     return Matrix(newMat);
@@ -61,7 +94,7 @@ Matrix<T> Matrix<T>::operator+(const T & number){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const T & number){
-    vector<vector<T>> newMat = my_matrix;
+    std::vector<Vector<T>> newMat = my_matrix;
     for (auto& ele : newMat)
         ele -= number;
     return Matrix(newMat);
@@ -69,7 +102,7 @@ Matrix<T> Matrix<T>::operator-(const T & number){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const T & number){
-    vector<vector<T>> newMat = my_matrix;
+    std::vector<Vector<T>> newMat = my_matrix;
     for (auto& ele : newMat)
         ele *= number;
     return Matrix(newMat);
@@ -80,7 +113,7 @@ Matrix<T> Matrix<T>::operator/(const T & number){
         printf("div 0 error\n");
         exit(-1);
     }
-    vector<vector<T>> newMat = my_matrix;
+    std::vector<Vector<T>> newMat = my_matrix;
     for (auto& ele : newMat)
         ele /= number;
     return Matrix(newMat);
@@ -121,7 +154,7 @@ Matrix<T>& Matrix<T>::operator/=(const T & number){
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Vector<T> & Vec){
     if (Vec.get_size() != col){
-        printf("vector and matrix size mismatched!\n");
+        printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
     Matrix<T> newMat(*this);
@@ -134,7 +167,7 @@ Matrix<T> Matrix<T>::operator+(const Vector<T> & Vec){
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Vector<T> & Vec){
     if (Vec.get_size() != col){
-        printf("vector and matrix size mismatched!\n");
+        printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
     Matrix<T> newMat(*this);
@@ -147,7 +180,7 @@ Matrix<T> Matrix<T>::operator-(const Vector<T> & Vec){
 template <typename T>
 Vector<T> Matrix<T>::operator*(const Vector<T> & Vec){
     if (Vec.get_size() != col){
-        printf("vector and matrix size mismatched!\n");
+        printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
     Vector<T> newVec(row);
@@ -159,7 +192,7 @@ Vector<T> Matrix<T>::operator*(const Vector<T> & Vec){
 template <typename T>
 Matrix<T>& Matrix<T>::operator+=(const Vector<T> & Vec){
     if (Vec.get_size() != col){
-        printf("vector and matrix size mismatched!\n");
+        printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
     for (int i=0; i<row; i++)
@@ -171,7 +204,7 @@ Matrix<T>& Matrix<T>::operator+=(const Vector<T> & Vec){
 template <typename T>
 Matrix<T>& Matrix<T>::operator-=(const Vector<T> & Vec){
     if (Vec.get_size() != col){
-        printf("vector and matrix size mismatched!\n");
+        printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
     for (int i=0; i<row; i++)
@@ -182,7 +215,7 @@ Matrix<T>& Matrix<T>::operator-=(const Vector<T> & Vec){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (row != size.first || col != size.second) {
         printf("matrix size mismatched!\n");
         exit(-1);
@@ -196,7 +229,7 @@ Matrix<T> Matrix<T>::operator+(const Matrix & Mat){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (row != size.first || col != size.second) {
         printf("matrix size mismatched!\n");
         exit(-1);
@@ -210,12 +243,12 @@ Matrix<T> Matrix<T>::operator-(const Matrix & Mat){
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (col != size.first){
         printf("col #1 be not equal to row #2\n");
         exit(-1);
     }
-    vector<vector<T>> newmat(row, vector<T>(size.second, 0));
+    std::vector<Vector<T>> newmat(row, Vector<T>(size.second, 0));
     for (int i=0; i<row; i++)
         for (int j=0; j<size.second; j++)
             for (int k=0; k<col; k++)
@@ -225,7 +258,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix & Mat){
 
 template <typename T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (row != size.first || col != size.second) {
         printf("matrix size mismatched!\n");
         exit(-1);
@@ -238,7 +271,7 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix & Mat){
 
 template <typename T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (row != size.first || col != size.second) {
         printf("matrix size mismatched!\n");
         exit(-1);
@@ -251,12 +284,12 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix & Mat){
 
 template <typename T>
 Matrix<T>& Matrix<T>::operator*=(const Matrix & Mat){
-    pair<int, int> size = Mat.get_size();
+    std::pair<int, int> size = Mat.get_size();
     if (col != size.first){
         printf("col #1 be not equal to row #2\n");
         exit(-1);
     }
-    vector<vector<T>> newmat(row, vector<T>(size.second, 0));
+    std::vector<Vector<T>> newmat(row, Vector<T>(size.second, 0));
     for (int i=0; i<row; i++)
         for (int j=0; j<size.second; j++)
             for (int k=0; k<col; k++)
@@ -278,7 +311,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix & Mat){
 }
 
 template <typename T>
-Matrix<T>& Matrix<T>::operator=(const vector<vector<T>> & mat){
+Matrix<T>& Matrix<T>::operator=(const std::vector<std::vector<T>> & mat){
     my_matrix = mat;
     row = mat.size();
     col = mat[0].size();
@@ -296,7 +329,7 @@ bool Matrix<T>::operator==(const Matrix & Mat){
 }
 
 template <typename T>
-bool Matrix<T>::operator==(const vector<vector<T>> & mat){
+bool Matrix<T>::operator==(const std::vector<std::vector<T>> & mat){
     return (*this)==Matrix<T>(mat);
 }
 
@@ -335,7 +368,6 @@ Matrix<T> Matrix<T>::invertion(){
     Matrix<T> newMat(*this);
     I = I.identity();
     for (int i=0; i<row; i++) {
-        std::cout << i+1 << std::endl;
         j = i+1;
         while (abs(newMat[i][i]) < ZERO_LIMIT) {
             if (j == row) {
@@ -362,10 +394,78 @@ Matrix<T> Matrix<T>::invertion(){
         }
     }
     for (int i=0; i<row; i++) {
-        if (abs(newMat[i][i] - 1) < ZERO_LIMIT) {
+        if (abs(newMat[i][i] - 1) >= ZERO_LIMIT) {
             I[i] /= newMat[i][i];
             newMat[i] /= newMat[i][i];
         }
     }
     return I;
+}
+
+template <typename T>
+double Matrix<T>::det(){
+    if (row != col){
+        printf("not a square matrix. No det.\n");
+        exit(-1);
+    }
+    int j;
+    double residual, det = 1;
+    Matrix<T> newMat(*this);
+    for (int i=0; i<row; i++) {
+        j = i+1;
+        while (abs(newMat[i][i]) < ZERO_LIMIT) {
+            if (j == row) return 0;
+            if (abs(newMat[j][i]) < ZERO_LIMIT) {
+                j++;
+                continue;
+            }
+            swap(newMat[j], newMat[i]);
+        }
+        j = i+1;
+        while (j < row) {
+            if (abs(newMat[j][i]) < ZERO_LIMIT){
+                j++;
+                continue;
+            }
+            residual = 1.0*newMat[j][i]/newMat[i][i];
+            newMat[j] -= (newMat[i] * residual);
+            j++;
+        }
+    }
+    for (int i=0; i<row; i++) det *= newMat[i][i];
+    return det;
+}
+
+template <typename T>
+double Matrix<T>::norm(const std::string & norm_rank){
+    double res = 0;
+    if (norm_rank == "1") {
+        double temp;
+        for (int j=0; j<col; j++){
+            temp = 0;
+            for (int i=0; i<row; i++)
+                temp += abs(my_matrix[i][j]);
+            res = std::max(res, temp);
+        }
+    }
+    else if (norm_rank == "inf"){
+        double temp;
+        for (int i=0; i<row; i++) {
+            temp = 0;
+            for (int j=0; j<col; j++)
+                temp += abs(my_matrix[i][j]);
+            res = std::max(res, temp);
+        }
+    }
+    else if (norm_rank == "F"){
+        for (int i=0; i<row; i++)
+            for (int j=0; j<col; j++)
+                res += my_matrix[i][j]*my_matrix[i][j];
+        res = sqrt(res);
+    }
+    else {
+        printf("argument mismatch.\n");
+        exit(-1);
+    }
+    return res;
 }

@@ -53,7 +53,15 @@ class Vector{
     T dot(const Vector &);
     T dot(const vector<T> &);
 
-    friend std::ostream& operator<<(std::ostream &, const Vector<T> &);
+    Vector& resize(const int &);
+
+    friend std::ostream& operator <<(std::ostream& os, const Vector<T> & Vec){
+        for (auto& ele : Vec.get_vector()) {
+            os << ele << " ";
+        }
+        os << std::endl;
+        return os;
+    }
 };
 
 #endif

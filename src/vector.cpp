@@ -262,10 +262,18 @@ T Vector<T>::dot(const vector<T> & vec){
 }
 
 template <typename T>
-std::ostream& operator <<(std::ostream& os, const Vector<T> & Vec){
-    for (auto& ele : Vec.get_vector()) {
-        std::cout << ele << " ";
+Vector<T>& Vector<T>::resize(const int & newSize){
+    if (newSize < size){
+        while (size != newSize) {
+            my_vector.pop_back();
+            size--;
+        }
     }
-    std::cout << std::endl;
-    return os;
+    else if (newSize > size){
+        while (size != newSize) {
+            my_vector.push_back(0);
+            size++;
+        }
+    }
+    return *this;
 }
