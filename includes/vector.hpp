@@ -57,7 +57,7 @@ class Vector{
 
     friend std::ostream& operator <<(std::ostream& os, const Vector<T> & Vec){
         for (auto& ele : Vec.get_vector()) {
-            os << ele << " ";
+            os << ele << '\t';
         }
         os << std::endl;
         return os;

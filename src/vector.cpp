@@ -165,7 +165,7 @@ Vector<T>& Vector<T>::operator *=(const T & number) {
 
 template <typename T>
 Vector<T>& Vector<T>::operator /=(const T & number) {
-    if (abs(number) < ZERO_LIMIT){
+    if (fabs(number) < ZERO_LIMIT){
         printf("div 0 error\n");
         exit(-1);
     }
@@ -215,7 +215,7 @@ Vector<T>& Vector<T>::operator /=(const Vector & Vec){
         exit(-1);
     }
     for (int i=0; i<size; i++) {
-        if (abs(Vec[i]) < ZERO_LIMIT) {
+        if (fabs(Vec[i]) < ZERO_LIMIT) {
             printf("div 0 error\n");
             exit(-1);
         }
@@ -230,7 +230,7 @@ bool Vector<T>::operator ==(const Vector & Vec){
         return false;
     }
     for (int i=0; i<size; i++) {
-        if (abs(my_vector[i] - Vec[i])>=ZERO_LIMIT) {
+        if (fabs(my_vector[i] - Vec[i])>=ZERO_LIMIT) {
             return false;
         }
     }

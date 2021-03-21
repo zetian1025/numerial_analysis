@@ -109,7 +109,7 @@ Matrix<T> Matrix<T>::operator*(const T & number){
 }
 template <typename T>
 Matrix<T> Matrix<T>::operator/(const T & number){
-    if (abs(number) < ZERO_LIMIT){
+    if (fabs(number) < ZERO_LIMIT){
         printf("div 0 error\n");
         exit(-1);
     }
@@ -142,7 +142,7 @@ Matrix<T>& Matrix<T>::operator*=(const T & number){
 
 template <typename T>
 Matrix<T>& Matrix<T>::operator/=(const T & number){
-    if (abs(number) < ZERO_LIMIT){
+    if (fabs(number) < ZERO_LIMIT){
         printf("div 0 error\n");
         exit(-1);
     }
@@ -183,7 +183,7 @@ Vector<T> Matrix<T>::operator*(const Vector<T> & Vec){
         printf("std::vector and matrix size mismatched!\n");
         exit(-1);
     }
-    Vector<T> newVec(row);
+    Vector<T> newVec(row, 0);
     for (int i=0; i<row; i++)
         newVec[i] = (*this)[i].dot(Vec);
     return newVec;
@@ -334,6 +334,35 @@ bool Matrix<T>::operator==(const std::vector<std::vector<T>> & mat){
 }
 
 template <typename T>
+bool Matrix<T>::invertible() const{
+    if (row != col) return false;
+    int j; double residual;
+    Matrix<T> newMat(*this);
+    for (int i=0; i<row; i++) {
+        j = i+1;
+        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
+            if (j == row) return false;
+            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
+                j++;
+                continue;
+            }
+            swap(newMat[j], newMat[i]);
+        }
+        j = i+1;
+        while (j < row) {
+            if (fabs(newMat[j][i]) < ZERO_LIMIT){
+                j++;
+                continue;
+            }
+            residual = 1.0*newMat[j][i]/newMat[i][i];
+            newMat[j] -= (newMat[i] * residual);
+            j++;
+        }
+    }
+    return true;
+}
+
+template <typename T>
 Matrix<T> Matrix<T>::transpose(){
     Matrix<T> newMat(col, row);
     for (int i=0; i<row; i++)
@@ -343,7 +372,7 @@ Matrix<T> Matrix<T>::transpose(){
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::identity(){
+Matrix<T> Matrix<T>::identity() const{
     if (row != col){
         printf("row != col, matrix can't be inverted.\n");
         exit(-1);
@@ -369,12 +398,12 @@ Matrix<T> Matrix<T>::invertion(){
     I = I.identity();
     for (int i=0; i<row; i++) {
         j = i+1;
-        while (abs(newMat[i][i]) < ZERO_LIMIT) {
+        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
             if (j == row) {
                 printf("matrix is not inversible.\n");
                 exit(-1);
             }
-            if (abs(newMat[j][i]) < ZERO_LIMIT) {
+            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
                 j++;
                 continue;
             }
@@ -383,7 +412,7 @@ Matrix<T> Matrix<T>::invertion(){
         }
         j = i+1;
         while (j < row) {
-            if (abs(newMat[j][i]) < ZERO_LIMIT){
+            if (fabs(newMat[j][i]) < ZERO_LIMIT){
                 j++;
                 continue;
             }
@@ -394,7 +423,7 @@ Matrix<T> Matrix<T>::invertion(){
         }
     }
     for (int i=0; i<row; i++) {
-        if (abs(newMat[i][i] - 1) >= ZERO_LIMIT) {
+        if (fabs(newMat[i][i] - 1) >= ZERO_LIMIT) {
             I[i] /= newMat[i][i];
             newMat[i] /= newMat[i][i];
         }
@@ -413,9 +442,9 @@ double Matrix<T>::det(){
     Matrix<T> newMat(*this);
     for (int i=0; i<row; i++) {
         j = i+1;
-        while (abs(newMat[i][i]) < ZERO_LIMIT) {
+        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
             if (j == row) return 0;
-            if (abs(newMat[j][i]) < ZERO_LIMIT) {
+            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
                 j++;
                 continue;
             }
@@ -423,7 +452,7 @@ double Matrix<T>::det(){
         }
         j = i+1;
         while (j < row) {
-            if (abs(newMat[j][i]) < ZERO_LIMIT){
+            if (fabs(newMat[j][i]) < ZERO_LIMIT){
                 j++;
                 continue;
             }
@@ -444,7 +473,7 @@ double Matrix<T>::norm(const std::string & norm_rank){
         for (int j=0; j<col; j++){
             temp = 0;
             for (int i=0; i<row; i++)
-                temp += abs(my_matrix[i][j]);
+                temp += fabs(my_matrix[i][j]);
             res = std::max(res, temp);
         }
     }
@@ -453,7 +482,7 @@ double Matrix<T>::norm(const std::string & norm_rank){
         for (int i=0; i<row; i++) {
             temp = 0;
             for (int j=0; j<col; j++)
-                temp += abs(my_matrix[i][j]);
+                temp += fabs(my_matrix[i][j]);
             res = std::max(res, temp);
         }
     }

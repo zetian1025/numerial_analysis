@@ -3,7 +3,6 @@
 
 #include "vector.hpp"
 #include "util.hpp"
-#include <utility>
 #include <initializer_list>
 #include <algorithm>
 
@@ -58,9 +57,10 @@ class Matrix{
     
     bool operator ==(const Matrix &);
     bool operator ==(const std::vector<std::vector<T>> &);
+    bool invertible() const;
 
     Matrix transpose();
-    Matrix identity();
+    Matrix identity() const;
     Matrix invertion();
     double det();
     double norm(const std::string &);
@@ -71,8 +71,7 @@ class Matrix{
         col = Mat.get_size().second;
         os << "Matrix: \n" << "row: " << row << "\t col: " << col << std::endl;
         for (int i=0; i<row; i++){
-            for (int j=0; j<col; j++)
-                os << Mat[i][j] << '\t';
+                os << Mat[i] << '\t';
             os << std::endl;
         }
         return os;

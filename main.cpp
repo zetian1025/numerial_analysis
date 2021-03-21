@@ -1,19 +1,16 @@
 #include "main.hpp"
+#include <iostream>
 using namespace std;
 
 int main(){
-    Matrix<double> I({
-        {1, 0, 0},
-        {0, 1, 0},
-        {0, 0, 2}
+    Matrix<double> I ({
+        {5, 7, 9, 10},
+        {6, 8, 10, 9},
+        {7, 10, 8, 7},
+        {5, 7, 6, 5}
     });
-    Matrix<double> J({
-        {2, 3, 4},
-        {1, 2},
-        {6, 7, 8}
-    });
-
-    cout << I*J << endl;
-
+    Vector<double> B({1, 1, 1, 1});
+    Vector<double> X = Crout_LU(I, B);
+    cout << X;
     return 0;
 }
