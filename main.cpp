@@ -8,6 +8,8 @@ int main(){
         {4, 10, 8},
         {4, 8, 10}
     });
-    cout << A.invertion();
+    Matrix<double> L = LL(A);
+    // cout << L << L.transpose();
+    cout << L*transpose(L) << endl;
     return 0;
 }

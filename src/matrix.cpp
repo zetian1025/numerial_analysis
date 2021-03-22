@@ -343,29 +343,23 @@ bool Matrix<T>::operator==(const std::vector<std::vector<T>> & mat){
 template <typename T>
 bool Matrix<T>::invertible() const{
     if (row != col) return false;
-    int j; double residual;
+    double residual;
     Matrix<T> newMat(*this);
     for (int i=0; i<row; i++) {
-        j = i+1;
-        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
-            if (j == row) return false;
-            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
-                j++;
-                continue;
-            }
-            swap(newMat[j], newMat[i]);
+        int index = i;
+        for (int j=i; j<row; j++) if (fabs(newMat[j][i]) > fabs(newMat[index][i])) index = j;
+        if (fabs(newMat[index][i]) < ZERO_LIMIT) {
+            printf("matrix is not inversible.\n");
+            exit(-1);
         }
-        j = i+1;
-        while (j < row) {
-            if (fabs(newMat[j][i]) < ZERO_LIMIT){
-                j++;
-                continue;
-            }
+        if (index != i) swap(newMat[index], newMat[i]);
+        for (int j=0; j<row; j++){
+            if (j == i) continue;
             residual = 1.0*newMat[j][i]/newMat[i][i];
             newMat[j] -= (newMat[i] * residual);
-            j++;
         }
     }
+    for (int i=0; i<row; i++) if (fabs(newMat[i][i]) < ZERO_LIMIT) return false;
     return true;
 }
 
@@ -399,35 +393,24 @@ Matrix<T>& Matrix<T>::invertion(){
         printf("row != col, matrix can't be inverted.\n");
         exit(-1);
     }
-    int j;
     double residual;
-    Matrix<T> I(row, col);
-    Matrix<T> newMat(*this);
-    I.identity();
+    Matrix<T> I, newMat; I = identity(row); newMat = *this;
     for (int i=0; i<row; i++) {
-        j = i+1;
-        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
-            if (j == row) {
-                printf("matrix is not inversible.\n");
-                exit(-1);
-            }
-            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
-                j++;
-                continue;
-            }
-            swap(newMat[j], newMat[i]);
-            swap(I[j], I[i]);
+        int index = i;
+        for (int j=i; j<row; j++) if (fabs(newMat[j][i]) > fabs(newMat[index][i])) index = j;
+        if (fabs(newMat[index][i]) < ZERO_LIMIT) {
+            printf("matrix is not inversible.\n");
+            exit(-1);
         }
-        j = i+1;
-        while (j < row) {
-            if (fabs(newMat[j][i]) < ZERO_LIMIT){
-                j++;
-                continue;
-            }
+        if (index != i) {
+            swap(newMat[index], newMat[i]);
+            swap(I[index], I[i]);
+        }
+        for (int j=0; j<row; j++){
+            if (j == i) continue;
             residual = 1.0*newMat[j][i]/newMat[i][i];
             newMat[j] -= (newMat[i] * residual);
             I[j] -= (I[i]*residual);
-            j++;
         }
     }
     for (int i=0; i<row; i++) {
@@ -446,28 +429,17 @@ double Matrix<T>::det(){
         printf("not a square matrix. No det.\n");
         exit(-1);
     }
-    int j;
     double residual, det = 1;
     Matrix<T> newMat(*this);
     for (int i=0; i<row; i++) {
-        j = i+1;
-        while (fabs(newMat[i][i]) < ZERO_LIMIT) {
-            if (j == row) return 0;
-            if (fabs(newMat[j][i]) < ZERO_LIMIT) {
-                j++;
-                continue;
-            }
-            swap(newMat[j], newMat[i]);
-        }
-        j = i+1;
-        while (j < row) {
-            if (fabs(newMat[j][i]) < ZERO_LIMIT){
-                j++;
-                continue;
-            }
+        int index = i;
+        for (int j=i; j<row; j++) if (fabs(newMat[j][i]) > fabs(newMat[index][i])) index = j;
+        if (fabs(newMat[index][i]) < ZERO_LIMIT) return 0;
+        if (index != i) swap(newMat[index], newMat[i]);
+        for (int j=0; j<row; j++){
+            if (j == i) continue;
             residual = 1.0*newMat[j][i]/newMat[i][i];
             newMat[j] -= (newMat[i] * residual);
-            j++;
         }
     }
     for (int i=0; i<row; i++) det *= newMat[i][i];

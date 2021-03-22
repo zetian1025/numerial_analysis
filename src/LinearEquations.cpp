@@ -50,9 +50,39 @@ std::pair<Matrix<double>, Matrix<double>> _LU(const Matrix<double> & Mat) {
     return {L, U};
 }
 
-Matrix<double> LL(const Matrix<double> & Mat);
+Matrix<double> LL(const Matrix<double> & Mat){
+    if (!Mat.invertible()) {
+        printf("Matrix is uninvertible.\n");
+        exit(-1);
+    }
+    auto size = Mat.get_size();
+    int row, col; row = col = size.first;
+    Matrix<double> L(Mat);
+    for (int j=0; j<col; j++) {
+        std::cout << L;
+        for (int i=0; i<j; i++) L[j][j] -= L[i][j]*L[j][i];
+        L[j][j] = sqrt(L[j][j]);
+        for (int i=j+1; i<row; i++) {
+            for (int k=0; k<j; k++) L[i][j] -= L[i][k]*L[k][j];
+            L[i][j] /= L[j][j];
+            L[j][i] = L[i][j];
+        }
+    }
+    for (int i=0; i<row; i++) for (int j=i+1; j<col; j++) L[i][j] = 0;
+    return L;
+}
 
-std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat);
+std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat){
+    if (!Mat.invertible()) {
+        printf("Matrix is uninvertible.\n");
+        exit(-1);
+    }
+    Matrix<double> L = identity(Mat);
+    Matrix<double> D = identity(Mat);
+    int size = Mat.get_size().first;
+    for (int i=0; i<size; i++) D[i][i] = Mat[i][i];
+    
+}
 
 std::vector<Matrix<double>> LDU(const Matrix<double> & Mat){
     auto size = Mat.get_size();
