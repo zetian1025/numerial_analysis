@@ -12,6 +12,8 @@ Matrix<double> LL(const Matrix<double> &);
 
 std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> &);
 
+std::vector<Matrix<double>> LDU(const Matrix<double> &);
+
 Vector<double> Guass(const Matrix<double> &, const Vector<double> &);
 
 Vector<double> Guass_Jordan(const Matrix<double> &, const Vector<double> &);
@@ -24,10 +26,10 @@ Vector<double> Cholesky_LL(const Matrix<double> &, const Vector<double> &);
 
 Vector<double> Cholesky_LDL(const Matrix<double> &, const Vector<double> &);
 
-Vector<double> Jacobi_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> Jacobi_iteration(Matrix<double>, Vector<double>);
 
-Vector<double> Guass_Seidel_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> Guass_Seidel_iteration(Matrix<double>, Vector<double>);
 
-Vector<double> SOR_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> SOR_iteration(Matrix<double>,  Vector<double>, double);
 
 #endif

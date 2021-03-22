@@ -1,12 +1,13 @@
 #include "../includes/LinearEquations.hpp"
+#define ITERATION_TIME 100000;
 
 std::pair<Matrix<double>, Matrix<double>> LU(const Matrix<double> & Mat) {
     if (!Mat.invertible()) {
         printf("Matrix is uninvertible.\n");
         exit(-1);
     }
-    Matrix<double> L = Mat.identity();
-    Matrix<double> U = Mat.identity();
+    Matrix<double> L = identity(Mat);
+    Matrix<double> U = identity(Mat);
     int n = Mat.get_size().first;
     for (int r=0; r<n; r++) {
         for (int j=r; j<n; j++){
@@ -19,7 +20,6 @@ std::pair<Matrix<double>, Matrix<double>> LU(const Matrix<double> & Mat) {
             L[i][r] /= U[r][r];
         }
     }
-    std::cout << L*U;
     return {L, U};
 }
 
@@ -28,8 +28,8 @@ std::pair<Matrix<double>, Matrix<double>> _LU(const Matrix<double> & Mat) {
         printf("Matrix is uninvertible.\n");
         exit(-1);
     }
-    Matrix<double> L = Mat.identity();
-    Matrix<double> U = Mat.identity();
+    Matrix<double> L = identity(Mat);
+    Matrix<double> U = identity(Mat);
 
     for (int r=0; r<Mat.get_size().first; r++) {
         for (int i=r; i<Mat.get_size().first; i++) {
@@ -54,6 +54,23 @@ Matrix<double> LL(const Matrix<double> & Mat);
 
 std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat);
 
+std::vector<Matrix<double>> LDU(const Matrix<double> & Mat){
+    auto size = Mat.get_size();
+    if (size.first != size.second) {
+        printf("row != col. \n");
+        exit(-1);
+    }
+    Matrix<double> L(size.first, size.second);
+    Matrix<double> D = identity(Mat);
+    Matrix<double> U(size.first, size.second);
+    for (int i=0; i<size.first; i++) {
+        for (int j=0; j<i; j++) L[i][j] = Mat[i][j];
+        D[i][i] = Mat[i][i];
+        for (int j=i+1; j<size.second; j++) U[i][j] = Mat[i][j];
+    }
+    return {L, D, U};
+}
+
 Vector<double> Guass(const Matrix<double> &, const Vector<double> &);
 
 Vector<double> Guass_Jordan(const Matrix<double> &, const Vector<double> &);
@@ -66,6 +83,7 @@ Vector<double> Doolittle_LU(const Matrix<double> & Mat, Vector<double> Vec){
     auto L_U = LU(Mat);
     Matrix<double> L = L_U.first;
     Matrix<double> U = L_U.second;
+    // std::cout << L << U;
 
     int vec_size = Vec.get_size();
     Vector<double> X(vec_size, 0);
@@ -74,6 +92,7 @@ Vector<double> Doolittle_LU(const Matrix<double> & Mat, Vector<double> Vec){
         for (int k=i-1; k>=0; k--) Vec[i] -= Y[k]*L[i][k];
         Y[i] = Vec[i];
     }
+    // std::cout << Y;
     for (int i=vec_size-1; i>=0; i--) {
         for (int k=i+1; k<vec_size; k++) Y[i] -= X[k]*U[i][k];
         X[i] = Y[i]/=U[i][i];
@@ -89,6 +108,7 @@ Vector<double> Crout_LU(const Matrix<double> & Mat, Vector<double> Vec){
     auto L_U = _LU(Mat);
     Matrix<double> L = L_U.first;
     Matrix<double> U = L_U.second;
+    // std::cout << L << U;
 
     int vec_size = Vec.get_size();
     Vector<double> X(vec_size, 0);
@@ -97,6 +117,7 @@ Vector<double> Crout_LU(const Matrix<double> & Mat, Vector<double> Vec){
         for (int k=i-1; k>=0; k--) Vec[i] -= Y[k]*L[i][k];
         Y[i] = Vec[i]/=L[i][i];
     }
+    // std::cout << Y;
     for (int i=vec_size-1; i>=0; i--) {
         for (int k=i+1; k<vec_size; k++) Y[i] -= X[k]*U[i][k];
         X[i] = Y[i];
@@ -108,8 +129,32 @@ Vector<double> Cholesky_LL(const Matrix<double> & Mat, const Vector<double> & Ve
 
 Vector<double> Cholesky_LDL(const Matrix<double> & Mat, const Vector<double> & Vec);
 
-Vector<double> Jacobi_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> Jacobi_iteration(Matrix<double> Mat, Vector<double> Vec){
+    auto L_D_U = LDU(Mat);
+    Matrix<double> L, D, U; L = L_D_U[0], D = L_D_U[1].invertion(), U = L_D_U[2];
+    Vector<double> X(Vec.get_size(), 0);
+    Vec = D*Vec, Mat = -D*(L + U);
+    int n = ITERATION_TIME;
+    while (n--) X = Mat*X + Vec;
+    return X;
+}
 
-Vector<double> Guass_Seidel_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> Guass_Seidel_iteration(Matrix<double> Mat, Vector<double> Vec){
+    auto L_D_U = LDU(Mat);
+    Matrix<double> L, D, U; L = L_D_U[0], D = L_D_U[1], U = L_D_U[2];
+    Vector<double> X(Vec.get_size(), 0);
+    Mat = (L+D).invertion(); Vec = Mat * Vec; Mat *= -U;
+    int n = ITERATION_TIME;
+    while (n-->0) X = Mat*X + Vec;
+    return X;
+}
 
-Vector<double> SOR_iteration(const Matrix<double> &, const Vector<double> &);
+Vector<double> SOR_iteration(Matrix<double> Mat, Vector<double> Vec, double w=1){
+    auto L_D_U = LDU(Mat);
+    Matrix<double> L, D, U; L = L_D_U[0], D = L_D_U[1], U = L_D_U[2];
+    Vector<double> X(Vec.get_size(), 0);
+    Mat = (w*L + D).invertion(); Vec = w*Mat*Vec; Mat *= ((1-w)*D - w*U);
+    int n = ITERATION_TIME;
+    while (n-->0) X = Mat*X + Vec;
+    return X;
+}

@@ -30,6 +30,12 @@ const Vector<T>& Matrix<T>::operator[](const int& index) const{
 }
 
 template <typename T>
+Matrix<T>::Matrix(){
+    row = col = 1;
+    my_matrix = std::vector<Vector<T>> (row, Vector<T>(col, 0));
+}
+
+template <typename T>
 Matrix<T>::Matrix(int _row, int _col, T init){
     my_matrix = std::vector<Vector<T>>(_row, Vector<T>(_col, init));
     row = _row;
@@ -107,6 +113,7 @@ Matrix<T> Matrix<T>::operator*(const T & number){
         ele *= number;
     return Matrix(newMat);
 }
+
 template <typename T>
 Matrix<T> Matrix<T>::operator/(const T & number){
     if (fabs(number) < ZERO_LIMIT){
@@ -363,30 +370,31 @@ bool Matrix<T>::invertible() const{
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::transpose(){
-    Matrix<T> newMat(col, row);
-    for (int i=0; i<row; i++)
-        for (int j=0; j<col; j++)
-            newMat[j][i] = my_matrix[i][j];
-    return newMat;
+Matrix<T>& Matrix<T>::transpose(){
+    for (int i=0; i<row; i++) for (int j=0; j<i; j++) swap(my_matrix[i][j], my_matrix[j][i]);
+    return *this;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::identity() const{
+Matrix<T>& Matrix<T>::identity(){
     if (row != col){
         printf("row != col, matrix can't be inverted.\n");
         exit(-1);
     }
+    for (int i=0; i<row; i++) for (int j=0; j<row; j++) if (i != j) my_matrix[i][j] = 0;
+    for (int i=0; i<row; i++) my_matrix[i][i] = 1;
+    return *this;
+}
 
-    Matrix<T> newMat(row, col);
-    for (int i=0; i<row; i++) {
-        newMat[i][i] = 1;
-    }
+template <typename T>
+Matrix<T> Matrix<T>::identity(const int & k) {
+    Matrix<T> newMat(k, k, 0);
+    for (int i=0; i<k; i++) newMat[i][i] = 1;
     return newMat;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::invertion(){
+Matrix<T>& Matrix<T>::invertion(){
     if (row != col){
         printf("row != col, matrix can't be inverted.\n");
         exit(-1);
@@ -395,7 +403,7 @@ Matrix<T> Matrix<T>::invertion(){
     double residual;
     Matrix<T> I(row, col);
     Matrix<T> newMat(*this);
-    I = I.identity();
+    I.identity();
     for (int i=0; i<row; i++) {
         j = i+1;
         while (fabs(newMat[i][i]) < ZERO_LIMIT) {
@@ -428,7 +436,8 @@ Matrix<T> Matrix<T>::invertion(){
             newMat[i] /= newMat[i][i];
         }
     }
-    return I;
+    *this = I;
+    return *this;
 }
 
 template <typename T>

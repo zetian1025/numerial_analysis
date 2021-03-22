@@ -17,6 +17,7 @@ class Vector{
     int get_size() const;
     vector<T> get_vector() const;
 
+    Vector();
     Vector(const int &, const T &);
     Vector(const vector<T> &);
     Vector(const Vector<T> &);
@@ -62,6 +63,10 @@ class Vector{
         os << std::endl;
         return os;
     }
+
+    friend Vector<T> operator *(const double & k, Vector<T> Vec) { return Vec * k;}
+
+    friend Vector<T> operator -(Vector<T> Vec) { return -1*Vec; }
 };
 
 #endif

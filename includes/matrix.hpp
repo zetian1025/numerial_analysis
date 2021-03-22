@@ -20,6 +20,7 @@ class Matrix{
     Vector<T>& operator[](const int &);
     const Vector<T>& operator[](const int &) const;
 
+    Matrix();
     Matrix(int, int, T init=0);
     Matrix(const Matrix & );
     Matrix(const std::vector<vector<T>> &);
@@ -59,9 +60,10 @@ class Matrix{
     bool operator ==(const std::vector<std::vector<T>> &);
     bool invertible() const;
 
-    Matrix transpose();
-    Matrix identity() const;
-    Matrix invertion();
+    Matrix& transpose();
+    Matrix& identity();
+    Matrix identity(const int &);
+    Matrix& invertion();
     double det();
     double norm(const std::string &);
 
@@ -76,6 +78,16 @@ class Matrix{
         }
         return os;
     }
+
+    friend Matrix<T> operator *(const double & k, Matrix<T> Mat) { return Mat*k; }
+
+    friend Matrix<T> operator -(Matrix<T> Mat) { return -1*Mat; }
+
+    friend Matrix<T> transpose(Matrix<T> Mat) { return Mat.transpose();}
+
+    friend Matrix<T> identity(Matrix<T> Mat) { return Mat.identity();}
+
+    friend Matrix<T> invertion(Matrix<T> Mat) { return Mat.invertion();}
 };
 
 #endif

@@ -8,6 +8,12 @@ template <typename T>
 inline vector<T> Vector<T>::get_vector() const { return my_vector; }
 
 template <typename T>
+Vector<T>::Vector(){
+    size = 1;
+    my_vector = vector<T>(1, 0);
+}
+
+template <typename T>
 Vector<T>::Vector(const int & length, const T & number){
     size = length;
     my_vector = vector<T>(length, number);

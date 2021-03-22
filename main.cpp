@@ -3,14 +3,11 @@
 using namespace std;
 
 int main(){
-    Matrix<double> I ({
-        {5, 7, 9, 10},
-        {6, 8, 10, 9},
-        {7, 10, 8, 7},
-        {5, 7, 6, 5}
+    Matrix<double> A ({
+        {10, 4, 4},
+        {4, 10, 8},
+        {4, 8, 10}
     });
-    Vector<double> B({1, 1, 1, 1});
-    Vector<double> X = Crout_LU(I, B);
-    cout << X;
+    cout << A.invertion();
     return 0;
 }
