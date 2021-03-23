@@ -7,4 +7,7 @@
 #include "./includes/LinearEquations.hpp"
 #include "./src/LinearEquations.cpp"
 
+#include "./includes/NonLinearEquation.hpp"
+#include "./src/NonLinearEquation.cpp"
+
 #include "./includes/util.hpp"

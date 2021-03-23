@@ -4,4 +4,6 @@
 #include "./matrix.hpp"
 #include "./vector.hpp"
 
+double Newton(double (*f)(double), double(*_f)(double), double, double, double);
+
 #endif
