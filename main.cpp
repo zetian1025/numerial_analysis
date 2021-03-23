@@ -4,12 +4,13 @@ using namespace std;
 
 int main(){
     Matrix<double> A ({
-        {10, 4, 4},
-        {4, 10, 8},
-        {4, 8, 10}
+        {1, 2, 1, -2},
+        {2, 5, 3, -2},
+        {-2, -2, 3, 5},
+        {1, 2, 2, 4}
     });
-    auto LD = LDL(A);
-    auto L = LD.first, D = LD.second;
-    cout << L << D << transpose(L);
+    Vector<double> B({4, 7, -1, 0});
+    Vector<double> X = Guass(A, B);
+    cout << X;
     return 0;
 }

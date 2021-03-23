@@ -3,7 +3,7 @@
 
 std::pair<Matrix<double>, Matrix<double>> LU(const Matrix<double> & Mat) {
     if (!Mat.invertible()) {
-        printf("Matrix is uninvertible.\n");
+        printf("[LU]Matrix is uninvertible.\n");
         exit(-1);
     }
     Matrix<double> L = identity(Mat);
@@ -25,7 +25,7 @@ std::pair<Matrix<double>, Matrix<double>> LU(const Matrix<double> & Mat) {
 
 std::pair<Matrix<double>, Matrix<double>> _LU(const Matrix<double> & Mat) {
     if (!Mat.invertible()) {
-        printf("Matrix is uninvertible.\n");
+        printf("[_LU]Matrix is uninvertible.\n");
         exit(-1);
     }
     Matrix<double> L = identity(Mat);
@@ -40,7 +40,7 @@ std::pair<Matrix<double>, Matrix<double>> _LU(const Matrix<double> & Mat) {
             U[r][j] = Mat[r][j];
             for (int k=0; k<r; k++) U[r][j] -= L[r][k]*U[k][j];
             if (fabs(L[r][r]) < ZERO_LIMIT) {
-                printf("Sequential principal minor is illegal.\n");
+                printf("[_LU]Sequential principal minor is illegal.\n");
                 exit(-1);
             }
             else U[r][j] /= L[r][r];
@@ -52,7 +52,7 @@ std::pair<Matrix<double>, Matrix<double>> _LU(const Matrix<double> & Mat) {
 
 Matrix<double> LL(const Matrix<double> & Mat){
     if (!Mat.invertible()) {
-        printf("Matrix is uninvertible.\n");
+        printf("[LL]Matrix is uninvertible.\n");
         exit(-1);
     }
     auto size = Mat.get_size();
@@ -73,7 +73,7 @@ Matrix<double> LL(const Matrix<double> & Mat){
 
 std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat){
     if (!Mat.invertible()) {
-        printf("Matrix is uninvertible.\n");
+        printf("[LDL]Matrix is uninvertible.\n");
         exit(-1);
     }
     Matrix<double> L = identity(Mat);
@@ -94,7 +94,7 @@ std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat){
 std::vector<Matrix<double>> LDU(const Matrix<double> & Mat){
     auto size = Mat.get_size();
     if (size.first != size.second) {
-        printf("row != col. \n");
+        printf("[LDU]row != col. \n");
         exit(-1);
     }
     Matrix<double> L(size.first, size.second);
@@ -108,13 +108,69 @@ std::vector<Matrix<double>> LDU(const Matrix<double> & Mat){
     return {L, D, U};
 }
 
-Vector<double> Guass(const Matrix<double> &, const Vector<double> &);
+Vector<double> Guass(Matrix<double> Mat, Vector<double> Vec){
+    double residual;
+    auto size = Mat.get_size();
+    int row, col; row = size.first, col = size.second;
+    if (row != col) {
+        printf("[G]row != col.\n");
+        exit(-1);
+    }
 
-Vector<double> Guass_Jordan(const Matrix<double> &, const Vector<double> &);
+    for (int i=0; i<row; i++) {
+        int j = i+1;
+        while (fabs(Mat[i][i]) < ZERO_LIMIT || fabs(Vec[i]) < ZERO_LIMIT) {
+            if (j == row) {
+                printf("[G]Equation has no solution or infinite solutions.\n");
+                exit(-1);
+            }
+            if (fabs(Mat[i][i]) > ZERO_LIMIT && fabs(Vec[i]) > ZERO_LIMIT) {
+                swap(Mat[i], Mat[j]);
+                swap(Vec[i], Vec[j]);
+            }
+        }
+        for(int j=0; j<row; j++) {
+            if (j == i) continue;
+            residual = Mat[j][i] / Mat[i][i];
+            Mat[j] -= residual*Mat[i];
+            Vec[j] -= residual*Vec[i];
+        }
+    }
+    for (int i=0; i<row; i++) Vec[i] /= Mat[i][i];
+    return Vec;
+}
+
+Vector<double> Guass_Jordan(Matrix<double> Mat, Vector<double> Vec){
+    double residual;
+    auto size = Mat.get_size();
+    int row, col; row = size.first, col = size.second;
+    if (row != col) {
+        printf("[GJ]row != col.\n");
+        exit(-1);
+    }
+
+    for (int i=0; i<row; i++) {
+        int index = i;
+        for (int j=i+1; j<row; j++) if(fabs(Mat[j][i]) > fabs(Mat[index][i])) index = j;
+        swap(Mat[i], Mat[index]); swap(Vec[index], Vec[i]);
+        if (fabs(Mat[i][i]) < ZERO_LIMIT || fabs(Vec[i]) < ZERO_LIMIT) {
+            printf("[GJ]Equation has no solution or infinite solutions.\n");
+            exit(-1);
+        }
+        for(int j=0; j<row; j++) {
+            if (j == i) continue;
+            residual = Mat[j][i] / Mat[i][i];
+            Mat[j] -= residual*Mat[i];
+            Vec[j] -= residual*Vec[i];
+        }
+    }
+    for (int i=0; i<row; i++) Vec[i] /= Mat[i][i];
+    return Vec;
+}
 
 Vector<double> Doolittle_LU(const Matrix<double> & Mat, Vector<double> Vec){
     if (Mat.get_size().first != Vec.get_size()) {
-        printf("Matrix and vector size mismatched.\n");
+        printf("[D_LU]Matrix and vector size mismatched.\n");
         exit(-1);
     }
     auto L_U = LU(Mat);
@@ -139,7 +195,7 @@ Vector<double> Doolittle_LU(const Matrix<double> & Mat, Vector<double> Vec){
 
 Vector<double> Crout_LU(const Matrix<double> & Mat, Vector<double> Vec){
     if (Mat.get_size().first != Vec.get_size()) {
-        printf("Matrix and vector size mismatched.\n");
+        printf("[C_LU]Matrix and vector size mismatched.\n");
         exit(-1);
     }
     auto L_U = _LU(Mat);
@@ -162,9 +218,42 @@ Vector<double> Crout_LU(const Matrix<double> & Mat, Vector<double> Vec){
     return X;
 }
 
-Vector<double> Cholesky_LL(const Matrix<double> & Mat, const Vector<double> & Vec);
+Vector<double> Cholesky_LL(const Matrix<double> & Mat, Vector<double> Vec) {
+    Matrix<double> L(LL(Mat));
+    Matrix<double> L_trans(transpose(L));
+    int size = Vec.get_size();
+    Vector<double> X(size, 0);
+    Vector<double> Y(size, 0);
 
-Vector<double> Cholesky_LDL(const Matrix<double> & Mat, const Vector<double> & Vec);
+    for (int i=0; i<size; i++) {
+        for (int j=0; j<i; j++) Vec[i] -= L[i][j]*Y[j];
+        Y[i] = Vec[i] / L[i][i];
+    }
+    for (int i=size-1; i>=0; i--) {
+        for (int j=size-1; j>i; j--) Y[i] -= L_trans[i][j]*X[j];
+        X[i] = Y[i] / L_trans[i][i];
+    }
+    return X;
+}
+
+Vector<double> Cholesky_LDL(const Matrix<double> & Mat, Vector<double> Vec){
+    auto LD = LDL(Mat);
+    Matrix<double> L, D; L = LD.first, D = invertion(LD.second);
+    int size = Vec.get_size();
+    Vector<double> X(size, 0);
+    Vector<double> Y(size, 0);
+
+    for (int i=0; i<size; i++){
+        for (int j=0; j<i; j++) Vec[i] -= L[i][j]*Y[j];
+        Y[i] = Vec[i];
+    }
+    Y = D*Y; L.transpose();
+    for (int i=size-1; i>=0; i--) {
+        for (int j=size-1; j>i; j--) Y[i] -= L[i][j]*X[j];
+        X[i] = Y[i];
+    }
+    return X;
+}
 
 Vector<double> Jacobi_iteration(Matrix<double> Mat, Vector<double> Vec){
     auto L_D_U = LDU(Mat);

@@ -14,17 +14,17 @@ std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> &);
 
 std::vector<Matrix<double>> LDU(const Matrix<double> &);
 
-Vector<double> Guass(const Matrix<double> &, const Vector<double> &);
+Vector<double> Guass(Matrix<double>, Vector<double>);
 
-Vector<double> Guass_Jordan(const Matrix<double> &, const Vector<double> &);
+Vector<double> Guass_Jordan(Matrix<double>, Vector<double>);
 
 Vector<double> Doolittle_LU(const Matrix<double> &, Vector<double>);
 
 Vector<double> Crout_LU(const Matrix<double> &, Vector<double>);
 
-Vector<double> Cholesky_LL(const Matrix<double> &, const Vector<double> &);
+Vector<double> Cholesky_LL(const Matrix<double> &, Vector<double>);
 
-Vector<double> Cholesky_LDL(const Matrix<double> &, const Vector<double> &);
+Vector<double> Cholesky_LDL(const Matrix<double> &, Vector<double>);
 
 Vector<double> Jacobi_iteration(Matrix<double>, Vector<double>);
 
