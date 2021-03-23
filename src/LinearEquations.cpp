@@ -59,7 +59,6 @@ Matrix<double> LL(const Matrix<double> & Mat){
     int row, col; row = col = size.first;
     Matrix<double> L(Mat);
     for (int j=0; j<col; j++) {
-        std::cout << L;
         for (int i=0; i<j; i++) L[j][j] -= L[i][j]*L[j][i];
         L[j][j] = sqrt(L[j][j]);
         for (int i=j+1; i<row; i++) {
@@ -81,7 +80,15 @@ std::pair<Matrix<double>, Matrix<double>> LDL(const Matrix<double> & Mat){
     Matrix<double> D = identity(Mat);
     int size = Mat.get_size().first;
     for (int i=0; i<size; i++) D[i][i] = Mat[i][i];
-    
+    for (int r=0; r<size; r++) {
+        for (int k=0; k<r; k++) D[r][r] -= D[k][k]*L[r][k]*L[r][k];
+        for (int i=r+1; i<size; i++) {
+            L[i][r] = Mat[i][r];
+            for (int k=0; k<r; k++) L[i][r] -= L[i][k]*D[k][k]*L[r][k];
+            L[i][r] /= D[r][r];
+        }
+    }
+    return {L, D};
 }
 
 std::vector<Matrix<double>> LDU(const Matrix<double> & Mat){

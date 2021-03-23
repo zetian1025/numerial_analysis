@@ -8,8 +8,8 @@ int main(){
         {4, 10, 8},
         {4, 8, 10}
     });
-    Matrix<double> L = LL(A);
-    // cout << L << L.transpose();
-    cout << L*transpose(L) << endl;
+    auto LD = LDL(A);
+    auto L = LD.first, D = LD.second;
+    cout << L << D << transpose(L);
     return 0;
 }
